@@ -1,2 +1,3 @@
-# eachine-E010-frame-stiffener
-A Tiny Whoop frame stiffener
+# E010S E010C Tiny Whoop Frame Stiffener
+
+Work in progress, didn't try fitting on yet. Print on your own risk :)
