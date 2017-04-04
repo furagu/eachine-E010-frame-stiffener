@@ -1,70 +1,89 @@
-$fn=50;
+include <Chamfers-for-OpenSCAD/Chamfer.scad>;
+
+$fn=100;
 
 the_thing(
     wheel_base=65,
-    motor_diameter=6,
-    pod_diameter=7,
+    arms_width=4,
+    cage_height=6,
+    cage_chamfer=0.4,
+    motor_diameter=6.5,
+    pod_diameter=8.5,
     pod_width=4,
-    thickness=0.9,
-    height=4
+    thickness=1
 );
 
-module the_thing(wheel_base, motor_diameter, pod_diameter, pod_width, thickness, height) {
+module the_thing(wheel_base, arms_width, cage_height, cage_chamfer, motor_diameter, pod_diameter, pod_width, thickness) {
     arm_length = wheel_base / 2;
 
     cage_positons = [
-        [[-arm_length, 0], [0, 0, -15]],
-        [[+arm_length, 0], [0, 0, 165]],
-        [[0, +arm_length], [0, 0, -75]],
-        [[0, -arm_length], [0, 0, 105]],
+        [[-arm_length, 0], [0, 0, -18]],
+        [[+arm_length, 0], [0, 0, 162]],
+        [[0, +arm_length], [0, 0, -72]],
+        [[0, -arm_length], [0, 0, 108]],
     ];
 
     difference() {
-        linear_extrude(height)
         union() {
-            difference() {
-                arms(wheel_base, thickness);
-                for (p = cage_positons)
-                    translate(p[0])
-                    rotate(p[1])
-                    hull()
-                    scale([0.9, 0.9, 0.9])
-                    cage(motor_diameter, pod_diameter, pod_width, thickness);
-            }
+            arms(length=wheel_base, base_width=arms_width, base_height=thickness, ridge_width=thickness, ridge_height=thickness, chamfer=thickness / 3);
             for (p = cage_positons)
                 translate(p[0])
                 rotate(p[1])
-                cage(motor_diameter, pod_diameter, pod_width, thickness);
+                linear_extrude(cage_height)
+                offset(r=thickness)
+                cage_base(motor_diameter, pod_diameter, pod_width, thickness, cage_chamfer);
         };
-        translate([0, 0, 7]) cube([30, 30, 10], center=true);
+
+        for (p = cage_positons)
+            translate([0, 0, -1])
+            translate(p[0])
+            rotate(p[1])
+            linear_extrude(cage_height + 2)
+            cage_base(motor_diameter, pod_diameter, pod_width, thickness, cage_chamfer);
     }
 }
 
-module cage(motor_diameter, pod_diameter, pod_width, thickness) {
+module cage(cage_height, motor_diameter, pod_diameter, pod_width, thickness, chamfer) {
+    linear_extrude(cage_height)
     difference() {
-        offset(r=thickness) cage_base(motor_diameter, pod_diameter, pod_width, thickness);
-        cage_base(motor_diameter, pod_diameter, pod_width, thickness);
+        offset(r=thickness) cage_base(motor_diameter, pod_diameter, pod_width, thickness, chamfer);
+        cage_base(motor_diameter, pod_diameter, pod_width, thickness, chamfer);
     }
 }
 
-module cage_base(motor_diameter, pod_diameter, pod_width,  thickness) {
+module cage_base(motor_diameter, pod_diameter, pod_width, thickness, chamfer) {
     union() {
-        difference() {
-            circle(d=pod_diameter);
-            translate([+pod_width / 2, -pod_diameter / 2]) square([pod_diameter, pod_diameter]);
-            translate([-(pod_diameter + pod_width / 2), -pod_diameter / 2]) square([pod_diameter, pod_diameter]);
+        cage_pod(pod_diameter, pod_width, chamfer);
+        offset(r=-chamfer)
+        union() {
+            cage_pod(pod_diameter, pod_width + chamfer * 2, chamfer);
+            circle(d=motor_diameter + chamfer * 2);
+            translate([motor_diameter / 2.3, 0]) circle(d=motor_diameter / 2 + chamfer * 2);
         }
-        circle(d=motor_diameter);
-        translate([motor_diameter / 2.4, 0]) circle(d=motor_diameter / 2);
     }
 }
 
-module arms(wheel_base, thickness) {
-    bar_size = [wheel_base + thickness * 2, thickness * 3];
+module cage_pod(pod_diameter, pod_width, chamfer) {
+    offset(r=chamfer)
+    difference() {
+        circle(d=pod_diameter - chamfer * 2);
+        translate([+pod_width / 2 - chamfer, -pod_diameter / 2]) square([pod_diameter, pod_diameter]);
+        translate([-(pod_diameter + pod_width / 2) + chamfer, -pod_diameter / 2]) square([pod_diameter, pod_diameter]);
+    }
+}
 
-    offset(r = -thickness)
+module arms(length, base_width, base_height, ridge_width, ridge_height, chamfer) {
     union() {
-        square(bar_size, center=true);
-        rotate([0, 0, 90]) square(bar_size, center=true);
+       arm(length, base_width, base_height, ridge_width, ridge_height, chamfer);
+       rotate([0, 0, 90]) arm(length, base_width, base_height, ridge_width, ridge_height, chamfer);
+    }
+}
+
+module arm(length, base_width, base_height, ridge_width, ridge_height, chamfer) {
+    rotate([90, 0, 90])
+    translate([0, 0, -length / 2])
+    union() {
+        translate([-ridge_width / 2, base_height, 0]) chamferCube(ridge_width, ridge_height, length, chamfer, [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 1, 1]);
+        translate([-base_width / 2, 0, 0]) chamferCube(base_width, base_height, length, chamfer, [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 1, 1]);
     }
 }
