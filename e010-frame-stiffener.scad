@@ -4,23 +4,24 @@ $fn=100;
 
 the_thing(
     wheel_base=65,
-    arms_width=4,
-    cage_height=6,
+    arms_width=3,
+    cage_angle=15.5,
+    cage_height=6.5,
     cage_chamfer=0.4,
     motor_diameter=6.5,
-    pod_diameter=8.5,
-    pod_width=4,
-    thickness=1
+    pod_diameter=8.6,
+    pod_width=5,
+    thickness=0.7
 );
 
-module the_thing(wheel_base, arms_width, cage_height, cage_chamfer, motor_diameter, pod_diameter, pod_width, thickness) {
+module the_thing(wheel_base, arms_width, cage_angle, cage_height, cage_chamfer, motor_diameter, pod_diameter, pod_width, thickness) {
     arm_length = wheel_base / 2;
 
     cage_positons = [
-        [[-arm_length, 0], [0, 0, -18]],
-        [[+arm_length, 0], [0, 0, 162]],
-        [[0, +arm_length], [0, 0, -72]],
-        [[0, -arm_length], [0, 0, 108]],
+        [[-arm_length, 0], [0, 0, -cage_angle]],
+        [[+arm_length, 0], [0, 0, -cage_angle + 180]],
+        [[0, +arm_length], [0, 0, +cage_angle - 90]],
+        [[0, -arm_length], [0, 0, +cage_angle + 90]],
     ];
 
     difference() {
