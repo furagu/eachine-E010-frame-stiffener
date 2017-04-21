@@ -6,10 +6,10 @@ the_thing(
     wheel_base=65,
     arms_width=3,
     cage_angle=15.5,
-    cage_height=6.5,
+    cage_height=6.3,
     cage_chamfer=0.4,
     motor_diameter=6.5,
-    pod_diameter=8.6,
+    pod_diameter=8.4,
     pod_width=5,
     thickness=0.7
 );
@@ -30,9 +30,15 @@ module the_thing(wheel_base, arms_width, cage_angle, cage_height, cage_chamfer, 
             for (p = cage_positons)
                 translate(p[0])
                 rotate(p[1])
-                linear_extrude(cage_height)
-                offset(r=thickness)
-                cage_base(motor_diameter, pod_diameter, pod_width, thickness, cage_chamfer);
+                difference() {
+                    linear_extrude(cage_height)
+                    offset(r=thickness)
+                    cage_base(motor_diameter, pod_diameter, pod_width, thickness, cage_chamfer);
+
+                    translate([pod_diameter / 2, 0, cage_height])
+                    rotate([0, 90, 0])
+                        cylinder(h=4, r=motor_diameter * 0.25, center=true, $fn=20);
+                }
         };
 
         for (p = cage_positons)
@@ -41,14 +47,6 @@ module the_thing(wheel_base, arms_width, cage_angle, cage_height, cage_chamfer, 
             rotate(p[1])
             linear_extrude(cage_height + 2)
             cage_base(motor_diameter, pod_diameter, pod_width, thickness, cage_chamfer);
-    }
-}
-
-module cage(cage_height, motor_diameter, pod_diameter, pod_width, thickness, chamfer) {
-    linear_extrude(cage_height)
-    difference() {
-        offset(r=thickness) cage_base(motor_diameter, pod_diameter, pod_width, thickness, chamfer);
-        cage_base(motor_diameter, pod_diameter, pod_width, thickness, chamfer);
     }
 }
 
