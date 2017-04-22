@@ -6,11 +6,11 @@ the_thing(
     wheel_base=65,
     arms_width=3,
     cage_angle=15.5,
-    cage_height=6.3,
+    cage_height=5.4,
     cage_chamfer=0.4,
     motor_diameter=6.5,
-    pod_diameter=8.4,
-    pod_width=5,
+    pod_diameter=8.2,
+    pod_width=4.6,
     thickness=0.7
 );
 
