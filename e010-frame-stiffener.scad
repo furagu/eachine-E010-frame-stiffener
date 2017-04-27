@@ -3,10 +3,10 @@ include <Chamfers-for-OpenSCAD/Chamfer.scad>;
 $fn=100;
 
 the_thing(
-    wheel_base=65.8,
+    wheel_base=65.6,
     arms_width=3,
     cage_angle=15.5,
-    cage_height=5.8,
+    cage_height=1.4,
     cage_chamfer=0.4,
     motor_diameter=6.5,
     pod_diameter=8.1,
@@ -18,10 +18,10 @@ module the_thing(wheel_base, arms_width, cage_angle, cage_height, cage_chamfer, 
     arm_length = wheel_base / 2;
 
     cage_positons = [
-        [[-arm_length, 0], [0, 0, -cage_angle]],
-        [[+arm_length, 0], [0, 0, -cage_angle + 180]],
-        [[0, +arm_length], [0, 0, +cage_angle - 90]],
-        [[0, -arm_length], [0, 0, +cage_angle + 90]],
+        [[-arm_length, 0], [0, 0, -cage_angle], [0, 0, 0]],
+        [[+arm_length, 0], [0, 0, -cage_angle + 180], [0, 0, 180]],
+        [[0, +arm_length], [0, 0, +cage_angle - 90], [0, 0, -90]],
+        [[0, -arm_length], [0, 0, +cage_angle + 90], [0, 0, 90]],
     ];
 
     difference() {
@@ -29,16 +29,13 @@ module the_thing(wheel_base, arms_width, cage_angle, cage_height, cage_chamfer, 
             arms(length=wheel_base, base_width=arms_width, base_height=thickness, ridge_width=thickness, ridge_height=thickness, chamfer=thickness / 3);
             for (p = cage_positons)
                 translate(p[0])
-                rotate(p[1])
-                difference() {
-                    linear_extrude(cage_height)
-                    offset(r=thickness)
-                    cage_base(motor_diameter, pod_diameter, pod_width, thickness, cage_chamfer);
-
-                    translate([pod_diameter / 2, 0, cage_height])
-                    rotate([0, 90, 0])
-                        cylinder(h=4, r=motor_diameter * 0.25, center=true, $fn=20);
-                }
+                rotate(p[2])
+                    translate([0, 0, cage_height / 2])
+                    hull() {
+                        cylinder(h=cage_height, r=pod_diameter / 2 + thickness * 1.5, center=true);
+                        translate([arms_width * 1.2, 0, 0])
+                            cylinder(h=cage_height, r=arms_width, center=true);
+                    }
         };
 
         for (p = cage_positons)
