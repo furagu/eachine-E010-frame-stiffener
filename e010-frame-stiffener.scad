@@ -1,21 +1,19 @@
-include <Chamfers-for-OpenSCAD/Chamfer.scad>;
-
 $fn=100;
 
 the_thing(
-    wheel_base=65.6,
-    arms_width=3,
+    wheel_base=65,
+    arms_width=2.6,
     cage_angle=15.5,
-    cage_height=1.4,
     cage_chamfer=0.4,
     motor_diameter=6.5,
     pod_diameter=8.1,
     pod_width=4.6,
-    thickness=0.7
+    thickness=0.6
 );
 
-module the_thing(wheel_base, arms_width, cage_angle, cage_height, cage_chamfer, motor_diameter, pod_diameter, pod_width, thickness) {
+module the_thing(wheel_base, arms_width, cage_angle, cage_chamfer, motor_diameter, pod_diameter, pod_width, thickness) {
     arm_length = wheel_base / 2;
+    cage_height = thickness * 2;
 
     cage_positons = [
         [[-arm_length, 0], [0, 0, -cage_angle], [0, 0, 0]],
@@ -32,7 +30,7 @@ module the_thing(wheel_base, arms_width, cage_angle, cage_height, cage_chamfer, 
                 rotate(p[2])
                     translate([0, 0, cage_height / 2])
                     hull() {
-                        cylinder(h=cage_height, r=pod_diameter / 2 + thickness * 1.5, center=true);
+                        cylinder(h=cage_height, r=pod_diameter / 2 + thickness * 1.7, center=true);
                         translate([arms_width * 1.2, 0, 0])
                             cylinder(h=cage_height, r=arms_width, center=true);
                     }
@@ -79,7 +77,7 @@ module arm(length, base_width, base_height, ridge_width, ridge_height, chamfer) 
     rotate([90, 0, 90])
     translate([0, 0, -length / 2])
     union() {
-        translate([-ridge_width / 2, base_height, 0]) chamferCube(ridge_width, ridge_height, length, chamfer, [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 1, 1]);
-        translate([-base_width / 2, 0, 0]) chamferCube(base_width, base_height, length, chamfer, [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 1, 1]);
+        translate([-ridge_width / 2, base_height, 0]) cube([ridge_width, ridge_height, length]);
+        translate([-base_width / 2, 0, 0]) cube([base_width, base_height, length]);
     }
 }
