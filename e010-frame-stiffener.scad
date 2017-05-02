@@ -1,7 +1,7 @@
 $fn=100;
 
 the_thing(
-    wheel_base=65.7,
+    wheel_base=65.7, // It's a stretch X actually! L=45 W=47
     arms_width=2.6,
     cage_angle=15.5,
     cage_chamfer=0.4,
