@@ -1,8 +1,8 @@
 $fn=100;
 
 the_thing(
-    motor_to_motor_length = 45.5,
-    motor_to_motor_width  = 47.5,
+    motor_to_motor_length = 46,
+    motor_to_motor_width  = 47,
     arms_width            = 2.6,
     cage_angle            = 20,
     cage_chamfer          = 0.4,
