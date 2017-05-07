@@ -2,8 +2,8 @@ $fn=100;
 
 the_thing(
     motor_to_motor_length = 46,
-    motor_to_motor_width  = 47,
-    arms_width            = 2.6,
+    motor_to_motor_width  = 46,
+    arms_width            = 2.5,
     cage_angle            = 20,
     cage_chamfer          = 0.4,
     motor_diameter        = 6.5,
@@ -16,7 +16,7 @@ module the_thing() {
     arm_length = sqrt(pow(motor_to_motor_length, 2) + pow(motor_to_motor_width, 2)) / 2;
     arm_angle = atan(motor_to_motor_width / motor_to_motor_length);
 
-    cage_height = thickness * 2;
+    cage_height = thickness;
     cage_x = motor_to_motor_length / 2;
     cage_y = motor_to_motor_width / 2;
 
@@ -34,11 +34,11 @@ module the_thing() {
                     arm(arm_length, arms_width, thickness);
 
                 hull() {
-                    translate([p[0][0], p[0][1], thickness])
+                    translate([p[0][0], p[0][1], cage_height / 2])
                         cylinder(h=cage_height, r=pod_diameter / 2 + thickness * 1.7, center=true);
 
                     rotate([0, 0, p[1]])
-                    translate([arm_length * 0.83, 0, thickness])
+                    translate([arm_length * 0.83, 0, cage_height / 2])
                         cylinder(h=cage_height, r=arms_width / 2, center=true);
                 }
             }
@@ -52,8 +52,6 @@ module the_thing() {
 }
 
 module arm(length, width, thickness) {
-    translate([0, -thickness / 2, thickness])
-        cube([length, thickness, thickness]);
     translate([0, -width / 2, 0])
         cube([length, width, thickness]);
 }
